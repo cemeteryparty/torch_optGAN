@@ -55,8 +55,8 @@ class optimAdam(Optimizer):
                 # store state
                 state["m_t"] = m_t.clone()
                 state["v_t"] = v_t.clone()
-                state['m_tHat'] = m_tHat.clone()
-                state['v_tHat'] = v_tHat.clone()
+                state["m_tHat"] = m_tHat.clone()
+                state["v_tHat"] = v_tHat.clone()
 
 class SOMD(Optimizer):
     def __init__(self, params, lr=0.001, version=1, m_rho=0.1):
