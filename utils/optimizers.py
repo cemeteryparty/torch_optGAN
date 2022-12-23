@@ -8,10 +8,10 @@ class optimAdam(Optimizer):
                  weight_decay=0, amsgrad=False):
         defaults = dict(lr=lr, betas=betas, eps=eps,
                  weight_decay=weight_decay, amsgrad=amsgrad)
-        super(OptimisticAdam, self).__init__(params, defaults)
+        super(optimAdam, self).__init__(params, defaults)
         self.betas = betas
     def __setstate__(self, state):
-        super(OptimisticAdam, self).__setstate__(state)
+        super(optimAdam, self).__setstate__(state)
 
     def step(self):
         beta1, beta2 = self.betas
