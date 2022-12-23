@@ -3,6 +3,7 @@ from utils.general import load_data
 from utils.general import calc_gp
 from utils.models import Discriminator
 from utils.models import Generator
+from utils.optimizers import optimAdam
 from utils.optimizers import SOMD
 
 from torch import from_numpy as np2TT
@@ -63,19 +64,18 @@ if __name__ == '__main__':
     if args.optimizer == "Adam":
         optG = torch.optim.Adam(G.parameters(), lr=args.g_lr, betas=(0.5, 0.9))
         optD = torch.optim.Adam(D.parameters(), lr=args.d_lr, betas=(0.5, 0.9))
-    elif args.optimizer == "Adagrad":
-        optG = torch.optim.Adagrad(G.parameters(), lr=1e-4)
-        optD = torch.optim.Adagrad(D.parameters(), lr=1e-4)
     elif args.optimizer == "SOMD_v1":
         optG = SOMD(G.parameters(), lr=args.g_lr)
-        optD = SOMD(G.parameters(), lr=args.d_lr)
+        optD = SOMD(D.parameters(), lr=args.d_lr)
     elif args.optimizer == "SOMD_v2":
         optG = SOMD(G.parameters(), lr=args.g_lr, version=2)
-        optD = SOMD(G.parameters(), lr=args.d_lr, version=3)
-    elif args.optimizer == 'optimAdam':
-        raise NotImplementedError("implementation doko")
-    elif args.optimizer == 'optimAdagrad':
-        raise NotImplementedError("implementation doko")
+        optD = SOMD(D.parameters(), lr=args.d_lr, version=2)
+    elif args.optimizer == "SOMD_v3":
+        optG = SOMD(G.parameters(), lr=args.g_lr, version=3)
+        optD = SOMD(D.parameters(), lr=args.d_lr, version=3)
+    elif args.optimizer == "optimAdam":
+        optG = optimAdam(G.parameters(), lr=args.g_lr)
+        optD = optimAdam(D.parameters(), lr=args.d_lr)
     else:
         raise ValueError("brain doko")
 
@@ -120,8 +120,6 @@ if __name__ == '__main__':
             gp_term.mul_(10)  # * lambda
             gp_term.backward()
             # overall loss
-            # loss_D_wass = loss_D_real - loss_D_fake # Wasserstein_D
-            # loss_D = -loss_D_wass + gp_term # 
             loss_D = loss_D_fake - loss_D_real + gp_term
             optD.step()
             # stdout
