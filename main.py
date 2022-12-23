@@ -20,7 +20,7 @@ import os
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class conf:
-    optimizer = "SOMD_v1"
+    optimizer = "Adam"
     epochs, batch_size = 1000, 128
     dis_ratio = 50
     saved = "saved/{}".format(datetime.now().strftime("%Y%m%d_%H%M%S"))
@@ -117,10 +117,12 @@ if __name__ == '__main__':
             loss_D_fake.backward(y_pos)
             # gradient penalty
             gp_term = calc_gp(x_batch.detach(), xf_batch.detach(), D) # gradient_penalty
+            gp_term.mul_(10)  # * lambda
             gp_term.backward()
             # overall loss
-            loss_D_wass = loss_D_real - loss_D_fake # Wasserstein_D
-            loss_D = -loss_D_wass + gp_term # loss_D_fake - loss_D_real
+            # loss_D_wass = loss_D_real - loss_D_fake # Wasserstein_D
+            # loss_D = -loss_D_wass + gp_term # 
+            loss_D = loss_D_fake - loss_D_real + gp_term
             optD.step()
             # stdout
             print("\r{}".format(" " * len(log)), end="")  # flush outputs
@@ -136,7 +138,6 @@ if __name__ == '__main__':
         loss_G = D(xf_batch) # g_loss
         loss_G = loss_G.mean()
         loss_G.backward(y_neg)
-        loss_G_ = -loss_G
         optG.step()
 
         loss_curve["loss_G"][epoch] = loss_G.item()
