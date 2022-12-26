@@ -11,7 +11,6 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-lambda_term = 10
 
 def load_data(train=True):
     if not os.path.isdir("data"):
@@ -42,7 +41,7 @@ def calc_gp(x_real, x_fake, D): # calculate_gradient_penalty(real_images, fake_i
     grads = Gradient(
         outputs=inter_p, inputs=inter, grad_outputs=y_pos, create_graph=True, retain_graph=True
     )[0]
-    grad_penalty = ((grads.norm(2, dim=1) - 1) ** 2).mean() * lambda_term
+    grad_penalty = ((grads.norm(2, dim=1) - 1) ** 2).mean()
     return grad_penalty
 
 def vis_latent(G, fname=None):

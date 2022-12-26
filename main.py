@@ -25,8 +25,8 @@ class conf:
     epochs, batch_size = 1000, 128
     dis_ratio = 50
     saved = "saved/{}".format(datetime.now().strftime("%Y%m%d_%H%M%S"))
-    g_lr, d_lr = 1e-3, 1e-3#5e-2, 1e-2
-    ckpt = None #"saved/20221220_131029_adam/checkpoints/hook_ep2000.pth"
+    g_lr, d_lr = 1e-3, 1e-3
+    ckpt = None
     def __init__(self):
         self.d = dict(optimizer=self.optimizer)
         self.d["epochs"] = self.epochs
@@ -89,8 +89,8 @@ if __name__ == '__main__':
         gp_term=np.zeros((args.epochs, ), dtype=np.float32)
     )
 
-    y_pos = torch.tensor(1, dtype=torch.float32) # one
-    y_neg = y_pos * -1 # mone
+    y_pos = torch.tensor(1, dtype=torch.float32)
+    y_neg = y_pos * -1
     y_pos, y_neg = y_pos.to(device), y_neg.to(device)
     # train loop
     for epoch in range(args.epochs):
@@ -104,7 +104,7 @@ if __name__ == '__main__':
             if i == args.dis_ratio:
                break
             D.zero_grad()
-            x_batch = x_batch.to(device) # images
+            x_batch = x_batch.to(device)
             noises = torch.randn(x_batch.size(0), 100).to(device)
             # real loss
             loss_D_real = D(x_batch) # d_loss_real
@@ -117,7 +117,7 @@ if __name__ == '__main__':
             loss_D_fake.backward(y_pos)
             # gradient penalty
             gp_term = calc_gp(x_batch.detach(), xf_batch.detach(), D) # gradient_penalty
-            gp_term.mul_(10)  # * lambda
+            gp_term.mul_(100)  # * lambda
             gp_term.backward()
             # overall loss
             loss_D = loss_D_fake - loss_D_real + gp_term
@@ -164,4 +164,4 @@ if __name__ == '__main__':
         os.path.join(args.saved, "{}.mat".format(
             datetime.now().strftime("%Y%m%d_%H%M%S")
         )), loss_curve
-    )    
+    )

@@ -66,7 +66,7 @@ class SOMD(Optimizer):
         self.m_rho = m_rho
 
     def __setstate__(self, state):
-        super(OptimisticAdam, self).__setstate__(state)
+        super(SOMD, self).__setstate__(state)
 
     def step(self):
         for group in self.param_groups:
