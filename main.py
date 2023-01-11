@@ -74,8 +74,8 @@ if __name__ == '__main__':
         optG = SOMD(G.parameters(), lr=args.g_lr, version=3)
         optD = SOMD(D.parameters(), lr=args.d_lr, version=3)
     elif args.optimizer == "optimAdam":
-        optG = optimAdam(G.parameters(), lr=args.g_lr)
-        optD = optimAdam(D.parameters(), lr=args.d_lr)
+        optG = optimAdam(G.parameters(), lr=args.g_lr, betas=(0.5, 0.9))
+        optD = optimAdam(D.parameters(), lr=args.d_lr, betas=(0.5, 0.9))
     else:
         raise ValueError("brain doko")
 
