@@ -21,4 +21,5 @@ pip install scipy
 ## Reference
 
 https://github.com/vsyrgkanis/optimistic_GAN_training
+
 https://github.com/Zeleni9/pytorch-wgan
